@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="evolvdb" defaultIdMethod="native">
+	<behavior name="timestampable" />
+	<behavior name="soft_delete" />
+	
+	<table name="user" phpName="User">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		
+		<column name="name" type="varchar" size="64" required="true" />
+		<validator column="name">
+			<rule name="required" message="Name field is required."/>
+			<rule name="minLength" value="3" message="Name must be at least 3 characters." />
+			<rule name="maxLength" value="64" message="Name can not be longer than 64 characters." />
+		</validator>
+		
+		<column name="email" type="varchar" size="128" required="true"/>
+		<unique name="unique_user_email">
+			<unique-column name="email"/>
+		</unique>
+		<validator column="email">
+			<rule name="required" message="Email field is required." />
+			<rule name="unique" message="Email address already exists!" />
+			<rule name="maxLength" value="128" message="Email can not be longer than 128 characters." />			
+		</validator>
+		
+		<column name="password" type="varchar" size="32" required="true"/>
+		<validator column="password">
+			<rule name="required" message="Password field is required." />
+			<rule name="maxLength" value="32" message="Password can not be longer than 32 characters." />			
+		</validator>		
+	</table>
+	
+	<table name="project" phpName="Project">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		
+		<column name="name" type="varchar" size="32" required="true" />
+		<unique name="unique_project_name">
+			<unique-column name="name"/>
+		</unique>
+		<validator column="name">
+			<rule name="required" message="Name field is required." />
+			<rule name="unique" message="Name already exists!" />
+			<rule name="minLength" value="3" message="Name must be at least 3 characters." />
+			<rule name="maxLength" value="32" message="Name can not be longer than 32 characters." />			
+		</validator>
+		
+		<column name="description" type="longvarchar" />
+		<column name="user_id" type="integer"/>
+		<foreign-key foreignTable="user" name="project_owner" onDelete="setnull" onUpdate="cascade">
+			<reference local="user_id" foreign="id"/>
+		</foreign-key>
+	</table>
+	
+	<table name="sprint" phpName="Sprint">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="name" type="varchar" size="32" required="true" />
+		<unique name="unique_sprint_name">
+			<unique-column name="name" />
+		</unique>
+		<validator column="name">
+			<rule name="required" message="Name field is required." />
+			<rule name="unique" message="Name already exists!" />
+			<rule name="minLength" value="3" message="Name must be at least 3 characters." />
+			<rule name="maxLength" value="32" message="Name can not be longer than 32 characters." />			
+		</validator>
+		<column name="start_date" type="date" required="true"/>
+		<column name="end_date" type="date" required="true"/>
+		<column name="description" type="longvarchar" />
+		<column name="retrospective" type="longvarchar" />
+		<column name="project_id" type="integer" required="true"/>
+		<foreign-key foreignTable="project" name="project_sprint"  onDelete="setnull" onUpdate="cascade">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+		<column name="user_id" type="integer"/>
+		<foreign-key foreignTable="user" name="sprint_owner" onDelete="setnull" onUpdate="cascade">
+			<reference local="user_id" foreign="id"/>
+		</foreign-key>		
+	</table>	
+	
+	<table name="task" phpName="Task">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		
+		<column name="name" type="varchar" size="128" required="true" />
+		<validator column="name">
+			<rule name="required" message="Name field is required." />
+			<rule name="maxLength" value="128" message="Name can not be longer than 128 characters." />			
+		</validator>		
+		
+		<column name="description" type="longvarchar"/>
+
+		<!-- points 1, 2, 3, 5, 8 -->
+		<column name="points" type="smallint" required="true" defaultValue="3" />
+		
+		<!-- New 1 In progress - 5 Done - 10 -->
+		<column name="status" type="smallint" required="true"  defaultValue="1" />
+			
+		<column name="user_id" type="integer"/>
+		<foreign-key foreignTable="user" name="user_task" onDelete="setnull" onUpdate="cascade">
+			<reference local="user_id" foreign="id"/>
+		</foreign-key>
+		
+		<column name="project_id" type="integer" required="true"/>
+		<foreign-key foreignTable="project" name="project_task" onDelete="setnull" onUpdate="cascade">
+			<reference local="project_id" foreign="id"/>
+		</foreign-key>
+		
+		<column name="sprint_id" type="integer"/>
+		<foreign-key foreignTable="sprint" name="sprint_task" onDelete="setnull" onUpdate="cascade">
+			<reference local="sprint_id" foreign="id"/>
+		</foreign-key>
+
+		<column name="parent_id" type="integer"/>
+		<foreign-key foreignTable="task" name="parent_task" onDelete="setnull" onUpdate="cascade">
+			<reference local="parent_id" foreign="id"/>
+		</foreign-key>
+		
+		<!-- manage the task ordering -->
+		<behavior name="sortable">
+			<parameter name="rank_column" value="task_ordering" />
+			<parameter name="use_scope" value="true" />
+			<parameter name="scope_column" value="project_id" />
+			<parameter name="scope_column" value="sprint_id" />
+			<parameter name="scope_column" value="parent_id" />
+		</behavior>		
+		<behavior name="versionable">
+			<!-- Log the version creation date -->
+			<parameter name="log_created_at" value="true" />
+			<!-- Log the version creator name, using setVersionCreatedBy() -->
+			<parameter name="log_created_by" value="true" />
+			<!-- Log the version comment, using setVersionComment() -->
+			<parameter name="log_comment" value="true" />
+		</behavior>
+	</table>
+	
+	<table name="tag" phpName="Tag">
+		<column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+		<column name="name" type="varchar" size="64" required="true" />
+		<validator column="name">
+			<rule name="required" message="Tag name is required."/>
+			<rule name="minLength" value="3" message="Name must be at least 3 characters." />
+			<rule name="maxLength" value="64" message="Name can not be longer than 64 characters." />
+		</validator>
+		<behavior name="sluggable">
+			<parameter name="slug_column" value="name" />
+		</behavior>
+	</table>
+	
+	<table name="tasktag" phpName="TaskTag">
+		<column name="task_id" type="integer" primaryKey="true"/>
+		<foreign-key foreignTable="task" name="tt_task_id" onDelete="cascade" onUpdate="cascade">
+			<reference local="task_id" foreign="id"/>
+		</foreign-key>
+		<column name="tag_id" type="integer" primaryKey="true"/>
+		<foreign-key foreignTable="tag" name="tt_tag_id" onDelete="cascade" onUpdate="cascade">
+			<reference local="tag_id" foreign="id"/>
+		</foreign-key>
+		<unique>
+		  <unique-column name="task_id" />
+		  <unique-column name="tag_id" />
+		</unique>
+	</table>
+</database>
