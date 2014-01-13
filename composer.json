@@ -1,7 +1,6 @@
 {
     "require": {
-		"pimple/pimple": "1.1.*@dev",
 		"propel/propel1": "1.7.0",
-		"peej/tonic": "dev-phpspec2"
+		"peej/tonic": "3.*"
     }
 }

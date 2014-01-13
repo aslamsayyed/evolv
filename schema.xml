@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="evolvdb" defaultIdMethod="native">
+<database name="evolvdb" defaultIdMethod="native" namespace="evolv\orm">
 	<behavior name="timestampable" />
 	<behavior name="soft_delete" />
 	
@@ -145,7 +145,7 @@
 		</behavior>
 	</table>
 	
-	<table name="tasktag" phpName="TaskTag">
+	<table name="tasktag" phpName="Tasktag">
 		<column name="task_id" type="integer" primaryKey="true"/>
 		<foreign-key foreignTable="task" name="tt_task_id" onDelete="cascade" onUpdate="cascade">
 			<reference local="task_id" foreign="id"/>
