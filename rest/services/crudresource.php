@@ -296,11 +296,11 @@ class CrudResource extends AdminBaseResource {
 	}
 	
 	protected function getQueryObject($resource) {
-		return PropelQuery::from("evolv\\orm\\" . $this->getQueryClassName($resource));
+		return PropelQuery::from($this->getQueryClassName($resource));
 	}
 	
 	protected function getQueryClassName($resource) {
-		return ucfirst(strtolower($resource));
+		return "evolv\\orm\\" . ucfirst(strtolower($resource));
 	}
 
     /**

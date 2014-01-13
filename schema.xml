@@ -23,11 +23,7 @@
 			<rule name="maxLength" value="128" message="Email can not be longer than 128 characters." />			
 		</validator>
 		
-		<column name="password" type="varchar" size="32" required="true"/>
-		<validator column="password">
-			<rule name="required" message="Password field is required." />
-			<rule name="maxLength" value="32" message="Password can not be longer than 32 characters." />			
-		</validator>		
+		<column name="password" type="varchar" size="32"/>
 	</table>
 	
 	<table name="project" phpName="Project">
