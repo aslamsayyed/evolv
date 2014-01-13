@@ -1,0 +1,64 @@
+<br />
+
+<div ng-controller="MyAccountCtrl">
+	<div class="bs-callout bs-callout-default">
+		<h4 ng-show="editedAccount">Edit my account</h4>
+		<h4 ng-hide="editedAccount">My account</h4>						
+	</div>
+
+	<hr />
+	<form class="form-horizontal" onSubmit="return false;" ng-hide="editedAccount" role="form">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Name</label>
+			<div class="col-sm-6">
+				{{myaccount.Name}}
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Email</label>
+			<div class="col-sm-6">
+				{{myaccount.Email}}
+			</div>
+		</div> 
+		<div class="form-group">
+			<label class="col-sm-3 control-label"></label>
+			<div class="col-sm-6">
+				<button class="btn btn-default"  ng-click="editMyAccount(myaccount)">Edit</button>
+			</div>
+		</div>
+	</form>
+	
+	<form class="form-horizontal" ng-show="editedAccount" name="editForm" role="form">
+		<table class="table table-hover">
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Name</label>
+				<div class="col-sm-6">
+					<input class="form-control" type="text" name="Name" required ng-model="editedAccount.Name"></input>
+				</div>
+			</div>
+			<div  class="form-group">
+				<label class="col-sm-3 control-label">Email</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="email" required name="Email" ng-model="editedAccount.Email"></input></div>
+			</div>
+			<div  class="form-group">
+				<label class="col-sm-3 control-label">Password</label>
+				<div class="col-sm-6">
+					<input class="form-control" type="password" name="Password" required ng-model="editedAccount.Password"></input>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Re-type Password</label>
+				<div class="col-sm-6">
+					<input class="form-control" type="password" name="ConfirmPassword" required ng-model="_confirmedPassword"></input>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label"></label>
+				<div class="col-sm-6">
+					<button class="btn btn-primary" type="submit" name="submit" value="save" ng-click="updateMyAccount()">Save</button>
+					<button class="btn btn-default" type="reset" name="submit" value="cancel" ng-click="cancelEditing()">Cancel</button>
+				</div>
+			</div>		
+		</form>
+	</div>	

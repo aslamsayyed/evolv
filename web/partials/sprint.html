@@ -1,0 +1,131 @@
+<br />
+
+<div ng-controller="SprintCtrl">
+	<!-- list view header -->
+	<div  ng-show="viewMode=='List'" class="row">
+		<!-- search form -->
+		<div class="col-xs-12 col-sm-6 col-md-8"> 
+			<form role="form" ng-submit="performSearch()">
+				<div class="input-group">
+					<input type="text" class="form-control" required placeholder="Search" ng-model="searchKey">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="submit">Search</button>
+						<button class="btn btn-default" type="reset" ng-click="clearSearch()">Clear</button>
+					</span>
+				</div>
+			</form>
+		</div>
+		<!-- Add button -->
+		<div class="col-xs-6 col-md-4">
+			<a ng-click="addNew()" class='btn btn-default pull-right'>Add New</a>
+		</div>
+	</div>
+	<div ng-show="viewMode=='Add' || viewMode=='Edit'" class="bs-callout bs-callout-default">
+		<h4 ng-show="viewMode=='Add'">Add new sprint</h4>
+		<h4 ng-show="viewMode=='Edit'">Edit sprint</h4>						
+	</div>
+
+	<hr />
+	
+	<alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
+	
+	<!-- List view -->
+	<div ng-show="viewMode=='List'">
+		<!-- List view -->
+		<div class="scrollable-list" ng-show="viewModel.results.length">
+			<table class="table table-responsive table-hover table-striped table-condensed">
+				<thead>
+					<tr>
+						<!-- column sorting directive order is column name in table -->
+						<th colsort order="'Name'" by="by" reverse="reverse">Name</th>
+						<th colsort order="'Description'" by="by" reverse="reverse">Description</th>
+						<th colsort order="'StartDate'" by="by" reverse="reverse">Start Date</th>
+						<th colsort order="'EndDate'" by="by" reverse="reverse">End Date</th>
+						<th colsort order="'Retrospective'" by="by" reverse="reverse">Retrospective</th>
+						<th colsort order="'ProjectId'" by="by" reverse="reverse">Project</th>
+						<th colsort order="'AccountId'" by="by" reverse="reverse">Account</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="sprint in viewModel.results">
+						<td>{{sprint.Name}}</td>
+						<td>{{sprint.Description}}</td>
+						<td>{{sprint.StartDate}}</td>
+						<td>{{sprint.EndDate}}</td>
+						<td>{{sprint.Retrospective}}</td>
+						<td>{{sprint.ProjectId}}</td>
+						<td>{{sprint.AccountId}}</td>
+						<td>
+							<button class="btn-link" ng-click="editObject(sprint)">Edit</button> | <button class="btn-link" ng-click="deleteObject(sprint)">Delete</button>
+						</td>
+					</tr>		  
+				</tbody>
+			</table>
+		</div>
+			
+		<!-- list info -->
+		<div class="row" ng-show="viewModel.results.length">
+			<!-- total record info -->
+			<div class="col-md-3">
+				<span class="pull-left label label-success">Totol sprints 
+					<span class="badge">{{viewModel.totalItems}}</span>
+				</span>
+			</div>
+			<!-- pagination -->
+			<div class="col-md-9" ng-show="viewModel.paginate">
+				<pagination boundary-links="true" total-items="viewModel.totalItems" page="viewModel.currentPage" items-per-page ="viewModel.itemsPerPage" class="pull-right" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" on-select-page="showPage(page)"></pagination>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Add / edit view -->
+	<div ng-show="viewMode=='Add' || viewMode=='Edit'">
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Name</label>
+				<div class="col-sm-6">
+					<input class="form-control" type="text" required ng-model="editedObject.Name"></input>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Description</label>
+				<div class="col-sm-6">
+				<textarea class="form-control" required ng-model="editedObject.Description"></textarea></div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Retrospective</label>
+				<div class="col-sm-6">
+				<textarea class="form-control" required ng-model="editedObject.Retrospective"></textarea></div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Start Date</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="text" required ng-model="editedObject.StartDate"></input></div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">End Date</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="text" required ng-model="editedObject.EndDate"></input></div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Project</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="text" required ng-model="editedObject.ProjectId"></input></div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Account</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="text" required ng-model="editedObject.AccountId"></input></div>
+			</div>
+			<!-- Form buttons -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-6">
+					<button ng-show="viewMode=='Add'" class="btn btn-primary" type="submit" ng-click="createObject()">Save</button>
+					<button ng-show="viewMode=='Edit'" class="btn btn-primary" type="submit" ng-click="updateObject()">Update</button>
+					<button class="btn btn-default" type="reset" ng-click="cancelEditing()">Cancel</button>
+				</div>
+			</div>				 
+		</form>
+	</div>
+</div>

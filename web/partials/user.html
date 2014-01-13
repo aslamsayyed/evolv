@@ -1,0 +1,96 @@
+<br />
+
+<div ng-controller="UserCtrl">
+	<!-- list view header -->
+	<div  ng-show="viewMode=='List'" class="row">
+		<!-- search form -->
+		<div class="col-xs-12 col-sm-6 col-md-8"> 
+			<form role="form" ng-submit="performSearch()">
+				<div class="input-group">
+					<input type="text" class="form-control" required placeholder="Search" ng-model="searchKey">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="submit">Search</button>
+						<button class="btn btn-default" type="reset" ng-click="clearSearch()">Clear</button>
+					</span>
+				</div>
+			</form>
+		</div>
+		<!-- Add button -->
+		<div class="col-xs-6 col-md-4">
+			<a ng-click="addNew()" class='btn btn-default pull-right'>Add New</a>
+		</div>
+	</div>
+	<div ng-show="viewMode=='Add' || viewMode=='Edit'" class="bs-callout bs-callout-default">
+		<h4 ng-show="viewMode=='Add'">Add new user</h4>
+		<h4 ng-show="viewMode=='Edit'">Edit user</h4>						
+	</div>
+
+	<hr />
+	
+	<alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
+	
+	<!-- List view -->
+	<div ng-show="viewMode=='List'">
+		<!-- List view -->
+		<div class="scrollable-list" ng-show="viewModel.results.length">
+			<table class="table table-responsive table-hover table-striped table-condensed">
+				<thead>
+					<tr>
+						<!-- column sorting directive order is column name in table -->
+						<th colsort order="'Name'" by="by" reverse="reverse">Name</th>
+						<th colsort order="'Email'" by="by" reverse="reverse">Email</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="user in viewModel.results">
+						<td>{{user.Name}}</td>
+						<td>{{user.Email}}</td>
+						<td>
+							<button class="btn-link" ng-click="editObject(user)">Edit</button> | <button class="btn-link" ng-click="deleteObject(user)">Delete</button>
+						</td>
+					</tr>		  
+				</tbody>
+			</table>
+		</div>
+			
+		<!-- list info -->
+		<div class="row" ng-show="viewModel.results.length">
+			<!-- total record info -->
+			<div class="col-md-3">
+				<span class="pull-left label label-success">Totol users 
+					<span class="badge">{{viewModel.totalItems}}</span>
+				</span>
+			</div>
+			<!-- pagination -->
+			<div class="col-md-9" ng-show="viewModel.paginate">
+				<pagination boundary-links="true" total-items="viewModel.totalItems" page="viewModel.currentPage" items-per-page ="viewModel.itemsPerPage" class="pull-right" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;" on-select-page="showPage(page)"></pagination>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Add / edit view -->
+	<div ng-show="viewMode=='Add' || viewMode=='Edit'">
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Name</label>
+				<div class="col-sm-6">
+					<input class="form-control" type="text" required ng-model="editedObject.Name"></input>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Email</label>
+				<div class="col-sm-6">
+				<input class="form-control" type="email" required ng-model="editedObject.Email"></input></div>
+			</div>
+			<!-- Form buttons -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-6">
+					<button ng-show="viewMode=='Add'" class="btn btn-primary" type="submit" ng-click="createObject()">Save</button>
+					<button ng-show="viewMode=='Edit'" class="btn btn-primary" type="submit" ng-click="updateObject()">Update</button>
+					<button class="btn btn-default" type="reset" ng-click="cancelEditing()">Cancel</button>
+				</div>
+			</div>				 
+		</form>
+	</div>
+</div>

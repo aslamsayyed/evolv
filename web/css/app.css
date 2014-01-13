@@ -1,0 +1,24 @@
+.pagination {
+  margin: 0px;
+}
+.center-y {
+	vertical-align: middle;
+}
+.pagination > .active > a {
+	cursor: pointer;
+}
+.pagination > li > a {
+	cursor: pointer;
+}
+
+table > thead > tr > th > a {
+	cursor: pointer;
+}
+.bs-callout {
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.bs-callout-default {
+	background-color: #f8f8f8;
+}
