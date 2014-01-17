@@ -4,7 +4,7 @@
 	<!-- list view header -->
 	<div  ng-show="viewMode=='List'" class="row">
 		<!-- search form -->
-		<div class="col-xs-12 col-sm-6 col-md-8"> 
+		<div class="col-md-12"> 
 			<form role="form" ng-submit="performSearch()">
 				<div class="input-group">
 					<input type="text" class="form-control" required placeholder="Search" ng-model="searchKey">
@@ -15,11 +15,8 @@
 				</div>
 			</form>
 		</div>
-		<!-- Add button -->
-		<div class="col-xs-6 col-md-4">
-			<a ng-click="addNew()" class='btn btn-default pull-right'>Add New</a>
-		</div>
 	</div>
+	
 	<div ng-show="viewMode=='Add' || viewMode=='Edit'" class="bs-callout bs-callout-default">
 		<h4 ng-show="viewMode=='Add'">Add new task</h4>
 		<h4 ng-show="viewMode=='Edit'">Edit task</h4>						
@@ -31,6 +28,16 @@
 	
 	<!-- List view -->
 	<div ng-show="viewMode=='List'">
+		<!-- Add New view -->
+		<div class="row">
+			<div class="col-md-12">
+				<span class="pull-right label label-primary"> 
+					<span class="glyphicon glyphicon-plus" ng-click="addNew()"></span>
+				</span>
+			</div>
+		</div>
+		
+		<br />
 		<!-- List view -->
 		<div class="scrollable-list" ng-show="viewModel.results.length">
 			<table class="table table-responsive table-hover table-striped table-condensed">
@@ -38,26 +45,29 @@
 					<tr>
 						<!-- column sorting directive order is column name in table -->
 						<th colsort order="'Name'" by="by" reverse="reverse">Name</th>
-						<th colsort order="'Description'" by="by" reverse="reverse">Decription</th>
+						<!-- <th colsort order="'Description'" by="by" reverse="reverse">Decription</th> -->
 						<th colsort order="'Points'" by="by" reverse="reverse">Points</th>
 						<th colsort order="'Status'" by="by" reverse="reverse">Status</th>
 						<th colsort order="'UserId'" by="by" reverse="reverse">User</th>
 						<th colsort order="'ProjectId'" by="by" reverse="reverse">Project</th>
 						<th colsort order="'SprintId'" by="by" reverse="reverse">Sprint</th>
 						<th colsort order="'Parent'" by="by" reverse="reverse">Parent</th>
+						<th colsort order="'Rating'" by="by" reverse="reverse">Rating</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="task in viewModel.results">
 						<td>{{task.Name}}</td>
-						<td>{{task.Description}}</td>
+						<!-- <td>{{task.Description}}</td> -->
 						<td>{{task.Points}}</td>
-						<td>{{task.Status}}</td>
-						<td>{{task.UserId}}</td>
-						<td>{{task.ProjectId}}</td>
-						<td>{{task.SprintId}}</td>
-						<td>{{task.Parent}}</td>
+						<td>{{getStatus(task.Status)}}</td>
+						<td>{{userMap[task.UserId]}}</td>
+						<td>{{projectMap[task.ProjectId]}}</td>
+						<td>{{sprintMap[task.SprintId]}}</td>
+						<td>{{taskMap[task.ParentId]}}</td>
+						<td><rating value="task.Rating" max="max" readonly="true"></rating>
+						</td>
 						<td>
 							<button class="btn-link" ng-click="editObject(task)">Edit</button> | <button class="btn-link" ng-click="deleteObject(task)">Delete</button>
 						</td>
@@ -70,7 +80,7 @@
 		<div class="row" ng-show="viewModel.results.length">
 			<!-- total record info -->
 			<div class="col-md-3">
-				<span class="pull-left label label-success">Totol tasks 
+				<span class="pull-left label label-primary">Totol tasks 
 					<span class="badge">{{viewModel.totalItems}}</span>
 				</span>
 			</div>
@@ -85,48 +95,82 @@
 	<div ng-show="viewMode=='Add' || viewMode=='Edit'">
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
+				<label class="col-sm-2 control-label">Tags</label>
+				<div class="col-sm-6">
+					<pre>Model: {{selected | json}} {{getTag}}</pre>
+					<div class="input-group">
+						<input type="text" ng-model="selected" typeahead-on-select="setTag(selected)" typeahead="tag.Name as tag.Name for tag in tags" class="form-control">
+						<span class="input-group-addon" ng-click="setTag(selected)">+</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
 				<label class="col-sm-2 control-label">Name</label>
 				<div class="col-sm-6">
 					<input class="form-control" type="text" required ng-model="editedObject.Name"></input>
 				</div>
-			</div>
+			</div><!--
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Description</label>
 				<div class="col-sm-6">
-				<textarea class="form-control" type="text" required ng-model="editedObject.Description"></textarea></div>
-			</div>
+				<textarea class="form-control" type="text" ng-model="editedObject.Description"></textarea></div>
+			</div> -->
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Points</label>
-				<div class="col-sm-6">
-				<input class="form-control" type="text" required ng-model="editedObject.Points"></input></div>
+				<label class="col-sm-2 control-label">Points {{editedObject.Points}}</label>
+				<div class="col-sm-6 btn-group">
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="1">1</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="2">2</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="3">3</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="5">5</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="8">8</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Points" btn-radio="13">13</button>
+				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Status</label>
+				<div class="col-sm-6 btn-group">
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Status" btn-radio="1">New</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Status" btn-radio="3">In-Progress</button>
+					<button type="button" class="btn btn-primary" ng-model="editedObject.Status" btn-radio="5">Done</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Rating</label>
 				<div class="col-sm-6">
-				<input class="form-control" type="text" required ng-model="editedObject.Status"></input></div>
+					<rating value="editedObject.Rating" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="overStar = null"></rating>
+					<span class="glyphicon glyphicon-remove" ng-click="editedObject.Rating = 0" ng-disabled="isReadonly"></span>
+				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">User</label>
 				<div class="col-sm-6">
-					<input class="form-control" type="text" required ng-model="editedObject.UserId"></input>
+					<select class="form-control" ng-model="editedObject.UserId">
+						<option ng-repeat="user in userSelector" ng-selected="{{user.Id == editedObject.UserId}}" value="{{user.Id}}">{{user.Name}}</option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Project</label>
 				<div class="col-sm-6">
-					<input class="form-control" type="text" required ng-model="editedObject.ProjectId"></input>
+					<select class="form-control" ng-model="editedObject.ProjectId">
+						<option ng-repeat="project in projectSelector" ng-selected="{{project.Id == editedObject.ProjectId}}" value="{{project.Id}}">{{project.Name}}</option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Sprint</label>
 				<div class="col-sm-6">
-					<input class="form-control" type="text" required ng-model="editedObject.SprintId"></input>
+					<select class="form-control" ng-model="editedObject.SprintId">
+						<option ng-repeat="sprint in sprintSelector" ng-selected="{{sprint.Id == editedObject.SprintId}}" value="{{sprint.Id}}">{{sprint.Name}}</option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Parent</label>
 				<div class="col-sm-6">
-					<input class="form-control" type="text" required ng-model="editedObject.ParentId"></input>
+					<select class="form-control" ng-model="editedObject.ParentId">
+						<option ng-repeat="task in taskSelector" ng-selected="{{task.Id == editedObject.ParentId}}" value="{{task.Id}}">{{task.Name}}</option>
+					</select>
 				</div>
 			</div>
 			<!-- Form buttons -->

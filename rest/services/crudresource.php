@@ -158,102 +158,12 @@ class CrudResource extends AdminBaseResource {
 		$this->searchKey = preg_replace( '/\s+/', '* *', $this->searchKey );
 		$keys = explode(" ", $this->searchKey);
 		switch($this->resource) {
-			case "account":
-				foreach($keys as $key)
-					$query->filterByName($key)->_or()->filterByEmail($key)->_or();
-				$roleQuery = $query->useRoleQuery();
-				foreach($keys as $key)
-					$roleQuery->filterByName($key)->_or();
-				$roleQuery->endUse();
-				$this->addOrderBy($query, true);
-			break;
-			case "license":
-				foreach($keys as $key)
-					$query->filterByKey($key)->_or()->filterByStoreName($key)->_or();
-					
-				$accountQuery = $query->useAccountQuery();
-				foreach($keys as $key)
-					$accountQuery->filterByName($key)->_or()->filterByEmail($key)->_or();
-				$accountQuery->endUse();
-				
-				$softwareQuery = $query->useSoftwareQuery();
-				foreach($keys as $key)
-					$softwareQuery->filterByName($key)->_or();
-				$softwareQuery->endUse();
-				
-				$typealiasQuery = $query->useLicensetypealiasQuery();
-				foreach($keys as $key)
-					$typealiasQuery->filterBySubscriptionName($key)->_or();
-				$typealiasQuery->endUse();
-				
-				$this->addOrderBy($query, true);
-			break;
-
-			case "software":
-				foreach($keys as $key)
-					$query->filterByName($key)->_or()->filterByDomainName($key);
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "softwarerelease":
-				foreach($keys as $key)
-					$query->filterByDescription($key)->_or();
-				$softwareQuery = $query->useSoftwareQuery();
-				foreach($keys as $key)
-					$softwareQuery->filterByName($key)->_or();
-				$softwareQuery->endUse();
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "softwarenotification":
-				foreach($keys as $key)
-					$query->filterByNotification($key)->_or();
-				$softwareQuery = $query->useSoftwareQuery();
-				foreach($keys as $key)
-					$softwareQuery->filterByName($key)->_or();
-				$softwareQuery->endUse();
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "plugincategory":
-				foreach($keys as $key)
-					$query->filterByName($key)->_or()->filterByDescription($key);
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "plugin":
-				foreach($keys as $key)
-					$query->filterByName($key)->_or()->filterByDescription($key)->_or()->filterByInfoUrl($key)->_or();
-				
-				$plugincategoryQuery = $query->usePlugincategoryQuery();
-				foreach($keys as $key)
-					$plugincategoryQuery->filterByName($key)->_or();
-				$plugincategoryQuery->endUse();
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "customplugin":
-				foreach($keys as $key)
-					$query->filterByName($key)->_or()->filterByDescription($key)->_or()->filterByInfoUrl($key)->_or();
-				
-				$accountQuery = $query->useAccountQuery();
-				foreach($keys as $key)
-					$accountQuery->filterByName($key)->_or();
-				$accountQuery->endUse();
-				$this->addOrderBy($query, true);
-			break;
-			
-			case "role":
+			case "tag":
 				foreach($keys as $key)
 					$query->filterByName($key);
 				$this->addOrderBy($query, true);
 			break;
 			
-			case "licensetype":
-				foreach($keys as $key)
-					$query->filterByName($key);
-				$this->addOrderBy($query, true);
-			break;
 		}
 	}
 	

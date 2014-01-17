@@ -88,10 +88,15 @@ evolvAppServices.factory('Rest', ['Constants', 'AppHttpInterceptors', '$resource
         MyAccount: customResource('myaccount'), 
 		HeaderInfo: customResource('headerinfo'),
 		User: crudResource('user'),
+		UserSelector:crudResource('user?qtype=select'),
 		Project: crudResource('project'),
+		ProjectSelector:crudResource('project?qtype=select'),
 		Sprint: crudResource('sprint'),
-		Task: crudResource('task'),
-		Tag: crudResource('tag')
+		SprintSelector:crudResource('sprint?qtype=select'),
+		Task: customResource('task'),
+		TaskSelector:crudResource('task?qtype=select'),
+		Tag: crudResource('tag'),
+		TagSelector:crudResource('tag?qtype=select')
     }
 }]);
 

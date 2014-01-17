@@ -13,18 +13,14 @@
 	
 	if (isset($_POST['email']) && isset($_POST['password']))
 	{		
-		$data = AccountQuery::create()
-		->useRoleQuery()
-		->filterByName(array('Super User','Admin'))
-		->endUse()
+		$query = PropelQuery::from("evolv\\orm\\User");
+		$data = $query
 		->filterByEmail($_POST['email'])
 		->filterByPassword(md5($_POST['password']))
-		->select(array('Id','Name','Role.Name'))
 		->findOne();
 		if($data){
-			$_SESSION['AccountId'] = $data['Id'];
-			$_SESSION['Name'] = $data['Name'];
-			$_SESSION['Role'] = $data['Role.Name'];
+			$_SESSION['UserId'] = $data->getId();
+			$_SESSION['Name'] = $data->getName();
 			ob_clean();
 			header( 'Location: index.php' );
 			die;
@@ -47,11 +43,11 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>Prosource :: Product Licensing Engine</title>
+		<title>Evolv</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="Wpfrog, Prosource, Product Licensing Engine">
-		<meta name="author" content="Prosource Inc">
+		<meta name="description" content="Evolv">
+		<meta name="author" content="Mutant Technologies">
 		
 		<!-- Le styles -->
 		<link href="framework/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
@@ -97,8 +93,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-6 col-md-offset-3">
-					<form class="form-signin" action="/plm/ng/login.php" method="post">
-						<h4 class="form-signin-heading">Product Licensing Engine</h4>
+					<form class="form-signin" action="/web/login.php" method="post">
+						<h4 class="form-signin-heading">Evolv</h4>
 						<?php if($login_error){
 							echo '<div style="color:#E00000" >Invalid email or password</div>';
 						}

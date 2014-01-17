@@ -89,7 +89,10 @@
 		
 		<!-- New 1 In progress - 5 Done - 10 -->
 		<column name="status" type="smallint" required="true"  defaultValue="1" />
-			
+		
+		<!-- 1 - Bad, 2 - Average ,3 - Good -->
+		<column name="rating" type="smallint" required="false"  defaultValue="3" />
+		
 		<column name="user_id" type="integer"/>
 		<foreign-key foreignTable="user" name="user_task" onDelete="setnull" onUpdate="cascade">
 			<reference local="user_id" foreign="id"/>

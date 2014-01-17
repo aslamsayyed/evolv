@@ -51,6 +51,71 @@ evolvAppControllers.controller('MyAccountCtrl', ['$scope', 'Rest', 'AppUtils',
 		}
 	}]);
 
+evolvAppControllers.controller('TaskCtrl', ['$scope', 'CrudController','Rest', 'AppUtils', '$modal',  
+	function ($scope, CrudController, Rest, AppUtils, $modal) {
+		$scope._cc = CrudController;
+		
+		$scope.userSelector = Rest.UserSelector.select({}, function() {
+			$scope.userMap = AppUtils.arrayToMap($scope.userSelector);
+		});
+		
+		$scope.projectSelector = Rest.ProjectSelector.select({}, function() {
+			$scope.projectMap = AppUtils.arrayToMap($scope.projectSelector);
+		});
+		
+		$scope.sprintSelector = Rest.SprintSelector.select({}, function() {
+			$scope.sprintMap = AppUtils.arrayToMap($scope.sprintSelector);	
+		});
+		
+		$scope.tagSelector = Rest.TagSelector.select({}, function() {
+			$scope.tags = $scope.tagSelector;
+		});
+		
+		$scope.taskSelector = Rest.TaskSelector.select({}, function() {
+			$scope.taskMap = AppUtils.arrayToMap($scope.taskSelector);
+		});
+				
+		/* Tag */
+		$scope.selected = undefined;
+		$scope.tagList = [];
+		$scope.setTag = function(tag) {
+			$scope.tagList.push(tag);
+		}
+		$scope.getTag = $scope.tagList;
+		
+		/* Status */
+		$scope.getStatus = function(statusCode){
+			switch(statusCode){
+				case 1: return "New";
+				case 3: return "In-Progress";
+				case 5: return "Done";
+			}
+		}
+		
+		/* Rating */
+		$scope.max = 3;
+		$scope.isReadonly = false;
+
+		$scope.hoveringOver = function(value) {
+			$scope.overStar = value;
+			$scope.percent = 100 * (value / $scope.max);
+		};
+
+		$scope.ratingStates = [
+			{stateOn: 'glyphicon-ok-sign', stateOff: 'glyphicon-ok-circle'},
+			{stateOn: 'glyphicon-star', stateOff: 'glyphicon-star-empty'},
+			{stateOn: 'glyphicon-heart', stateOff: 'glyphicon-ban-circle'},
+			{stateOn: 'glyphicon-heart'},
+			{stateOff: 'glyphicon-off'}
+		];
+		
+		/* initialize scope */
+		$scope._cc.initialize($scope, Rest.Task, AppUtils);
+		$scope.showList();
+		
+	}]);
+	
+	
 evolvAppControllers.factory('CrudController',[
 	function () {
 		var scope, RestModel, AppUtils;
@@ -100,7 +165,7 @@ evolvAppControllers.factory('CrudController',[
 				};
 				
 				scope.cancelEditing = function() {
-					//scope.viewModel.results[scope.viewModel.results.indexOf(scope.editedObject)] = clonedObject;
+					scope.viewModel.results[scope.viewModel.results.indexOf(scope.editedObject)] = clonedObject;
 					scope.editedObject = clonedObject = null;
 					scope.setMode("List");
 				};
@@ -186,27 +251,86 @@ evolvAppControllers.controller('UserCtrl', ['$scope', 'CrudController','Rest', '
 evolvAppControllers.controller('ProjectCtrl', ['$scope', 'CrudController','Rest', 'AppUtils',  
 	function ($scope, CrudController, Rest, AppUtils) {
 		$scope._cc = CrudController;
-		$scope._cc.initialize($scope, Rest.Project, AppUtils);
-		$scope.showList();				
+		$scope.userSelector = Rest.UserSelector.select({}, function() {
+			$scope.userMap = AppUtils.arrayToMap($scope.userSelector);
+				$scope._cc.initialize($scope, Rest.Project, AppUtils);
+				$scope.showList();
+		});				
 		
 	}]);
 	
 evolvAppControllers.controller('SprintCtrl', ['$scope', 'CrudController','Rest', 'AppUtils',  
 	function ($scope, CrudController, Rest, AppUtils) {
 		$scope._cc = CrudController;
-		$scope._cc.initialize($scope, Rest.Sprint, AppUtils);
-		$scope.showList();				
+		$scope.userSelector = Rest.UserSelector.select({}, function() {
+			$scope.userMap = AppUtils.arrayToMap($scope.userSelector);
+			$scope.projectSelector = Rest.ProjectSelector.select({}, function() {
+				$scope.projectMap = AppUtils.arrayToMap($scope.projectSelector);
+				$scope._cc.initialize($scope, Rest.Sprint, AppUtils);
+				$scope.setSortCol("StartDate");
+				$scope.showList();
+			});	
+		});
 		
+		$scope.getTask = function(id) {
+			//Rest.Sprint({id: id, verb: 'task'});
+			return id;
+		};
+		
+		$scope.getClassForStatus = function(start_date,end_date,retrospective) {
+			return  getStatus(start_date,end_date,retrospective,false);
+		};
+		$scope.getSprintStatus = function(start_date,end_date,retrospective) {
+			return  getStatus(start_date,end_date,retrospective,true);
+		};
+		
+		function getStatus(start_date,end_date,retrospective,isStatus) {
+			var status;
+			var sDate = new Date(start_date).getTime();
+			var eDate = new Date(end_date).getTime();
+			var cDate = new Date().getTime();
+			if(cDate >= sDate && cDate <= eDate)
+				status = "Started";
+			else if( cDate <= sDate)
+				status = "Un-started";
+			else if(cDate >= eDate && !retrospective)
+				status = "Elapsed";
+			else if(cDate >= eDate && retrospective)
+				status = "Completed";
+			
+			if(isStatus){
+				return status;
+			}
+			else{
+				var label;
+				switch(status){
+					case 'Started': label =  "label-info"; break;
+					case 'Elapsed': label =  "label-warning"; break;
+					case 'Completed': label =  "label-success"; break;
+					default : label =  "label-default";
+				}
+				return label;
+			}
+		}
 	}]);
-
+/*
 evolvAppControllers.controller('TaskCtrl', ['$scope', 'CrudController','Rest', 'AppUtils',  
 	function ($scope, CrudController, Rest, AppUtils) {
 		$scope._cc = CrudController;
-		$scope._cc.initialize($scope, Rest.Task, AppUtils);
-		$scope.showList();				
+		$scope.userSelector = Rest.UserSelector.select({}, function() {
+			$scope.userMap = AppUtils.arrayToMap($scope.userSelector);
+			$scope.projectSelector = Rest.ProjectSelector.select({}, function() {
+				$scope.projectMap = AppUtils.arrayToMap($scope.projectSelector);
+				$scope.sprintSelector = Rest.SprintSelector.select({}, function() {
+					$scope.sprintMap = AppUtils.arrayToMap($scope.sprintSelector);	
+					$scope._cc.initialize($scope, Rest.Task, AppUtils);
+					$scope.showList();
+				});	
+			});	
+		});				
 		
 	}]);
-	
+*/	
 evolvAppControllers.controller('TagCtrl', ['$scope', 'CrudController','Rest', 'AppUtils',  
 	function ($scope, CrudController, Rest, AppUtils) {
 		$scope._cc = CrudController;

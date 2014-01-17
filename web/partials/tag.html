@@ -4,7 +4,7 @@
 	<!-- list view header -->
 	<div  ng-show="viewMode=='List'" class="row">
 		<!-- search form -->
-		<div class="col-xs-12 col-sm-6 col-md-8"> 
+		<div class="col-md-12"> 
 			<form role="form" ng-submit="performSearch()">
 				<div class="input-group">
 					<input type="text" class="form-control" required placeholder="Search" ng-model="searchKey">
@@ -15,48 +15,46 @@
 				</div>
 			</form>
 		</div>
-		<!-- Add button -->
-		<div class="col-xs-6 col-md-4">
-			<a ng-click="addNew()" class='btn btn-default pull-right'>Add New</a>
-		</div>
 	</div>
+	
 	<div ng-show="viewMode=='Add' || viewMode=='Edit'" class="bs-callout bs-callout-default">
 		<h4 ng-show="viewMode=='Add'">Add new tag</h4>
 		<h4 ng-show="viewMode=='Edit'">Edit tag</h4>						
 	</div>
 
-	<hr />
+	<br />
 	
 	<alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
 	
 	<!-- List view -->
 	<div ng-show="viewMode=='List'">
-		<!-- List view -->
-		<div class="scrollable-list" ng-show="viewModel.results.length">
-			<table class="table table-responsive table-hover table-striped table-condensed">
-				<thead>
-					<tr>
-						<!-- column sorting directive order is column name in table -->
-						<th colsort order="'Name'" by="by" reverse="reverse">Name</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="tag in viewModel.results">
-						<td>{{tag.Name}}</td>
-						<td>
-							<button class="btn-link" ng-click="editObject(tag)">Edit</button> | <button class="btn-link" ng-click="deleteObject(tag)">Delete</button>
-						</td>
-					</tr>		  
-				</tbody>
-			</table>
+		<!-- Add New view -->
+		<div class="row">
+			<div class="col-md-12">
+				<span class="pull-right label label-primary"> 
+					<span class="glyphicon glyphicon-plus" ng-click="addNew()"></span>
+				</span>
+			</div>
 		</div>
-			
+		
+		<br />
+		
+		<!-- List view -->
+		<ul class="list-group">
+		  <li class="list-group-item" ng-repeat="tag in viewModel.results">
+			{{tag.Name}}
+			<span class="pull-right">
+				<span class="glyphicon glyphicon-edit" ng-click="editObject(tag)"></span>
+				<span class="glyphicon glyphicon-trash" ng-click="deleteObject(tag)"></span>
+			</span>
+		  </li>
+		</ul>
+					
 		<!-- list info -->
 		<div class="row" ng-show="viewModel.results.length">
 			<!-- total record info -->
 			<div class="col-md-3">
-				<span class="pull-left label label-success">Totol tags 
+				<span class="pull-left label label-primary">Totol tags 
 					<span class="badge">{{viewModel.totalItems}}</span>
 				</span>
 			</div>
