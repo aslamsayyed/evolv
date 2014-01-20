@@ -64,7 +64,7 @@
 							<a href="#/"><span class="glyphicon glyphicon-home"></span> Home</a>
 						</li>
 						<li>
-							<a href="#/myaccount"><span class="glyphicon glyphicon-user"></span> {{headerInfo.name}}</a>
+							<a href="#/myaccount"><span class="glyphicon glyphicon-user"></span> {{headerInfo.Name}}</a>
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">

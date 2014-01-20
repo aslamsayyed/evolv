@@ -5,15 +5,18 @@
  * @uri /crud/{resource}/{id}/{subresource}
  * @uri /crud/{resource}/{id}/{subresource}/{subid}
  */
-class CrudResource extends AdminBaseResource {
+class CrudResource extends BaseResource {
     private $resource = false;
 	private $id = false;
 	private $subResource = false;
 	private $subId = false;
+	
 	private $qType = false;
 	private $sortCol = "Id";
 	private $sort = Criteria::ASC;
 	private $searchKey = "";
+	private $action="";
+	
 	private $page = 1;
 	protected $recordsPerPage = 10;
 	protected $paginate = false;
@@ -46,6 +49,9 @@ class CrudResource extends AdminBaseResource {
 		
 		if (isset($_GET['search']))
 			$this->searchKey = $_GET['search'];
+		
+		if (isset($_GET['action']))
+			$this->action = $_GET['action'];
 	}
 	
 	/**
@@ -117,10 +123,8 @@ class CrudResource extends AdminBaseResource {
 				$this->addFilter($query);
 			else {
 				if ($rel = $this->getRelation($this->sortCol)) {
-					if (!$this->orderByActivation($query)) {
-						$query->join($rel)->useQuery($rel)->endUse();
-						$this->addOrderBy($query);
-					}
+					$query->join($rel)->useQuery($rel)->endUse();
+					$this->addOrderBy($query);
 				} else {
 					$query->orderBy($this->sortCol, $this->sort);
 				}
@@ -128,31 +132,7 @@ class CrudResource extends AdminBaseResource {
 		}
 		return $query;
 	}
-	
-	private function orderByActivation($query) {
-		switch ($this->sortCol) {
-			case 'ActivationAccountId':
-				$query->join("License")->useQuery("License")
-				->join("Account")->useQuery("Account")
-				->endUse()->endUse();
-				$query->orderBy("Account.Name", $this->sort);
-				return true;
-			case 'ActivationSoftwareId':
-				$query->join("License")->useQuery("License")
-				->join("Software")->useQuery("Software")
-				->endUse()->endUse();
-				$query->orderBy("Software.Name", $this->sort);
-				return true;
-			case 'ActivationSubscriptionId':
-				$query->join("License")->useQuery("License")
-				->join("Licensetypealias")->useQuery("Licensetypealias")
-				->endUse()->endUse();
-				$query->orderBy("Licensetypealias.SubscriptionName", $this->sort);
-				return true;
-		}
-		return false;
-	}
-	
+		
 	public function addFilter($query) {
 		$this->searchKey = "*" . trim($this->searchKey) . "*";
 		$this->searchKey = preg_replace( '/\s+/', '* *', $this->searchKey );
@@ -180,10 +160,7 @@ class CrudResource extends AdminBaseResource {
 			return;
 		$col = $this->sortCol;
 		if ($rel = $this->getRelation($this->sortCol)) {
-			if ($rel == "Licensetypealias")
-				$col = $rel . ".SubscriptionName";
-			else 
-				$col = $rel . ".Name";
+			$col = $rel . ".Name";
 		}
 		$query->orderBy($col, $this->sort);
 	}

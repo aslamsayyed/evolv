@@ -7,9 +7,13 @@ class HeaderInfoResource extends CrudResource {
 	}
 	 function get() {
 	 try {
-			$name = $_SESSION['Name'];
-			$data = '{"name":"' . $name . '"}';
-			return new Tonic\Response(Tonic\Response::OK, $data);
+			$userQuery = $this->getQueryObject("User");
+			$user = $userQuery->findPK($_SESSION['UserId']);
+			if ($user == null) {
+				return new Tonic\Response(Tonic\Response::NOTFOUND);
+			} else {
+				return new Tonic\Response(Tonic\Response::OK, $user->toJSON(false));
+			}
 		}
 		catch (Exception $e) {
 			return new Tonic\Response(Tonic\Response::BADGATEWAY, "Error occured while fetching list");
