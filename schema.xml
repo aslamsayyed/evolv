@@ -24,6 +24,7 @@
 		</validator>
 		
 		<column name="password" type="varchar" size="32"/>
+		<column name="settings" type="longvarchar" />
 	</table>
 	
 	<table name="project" phpName="Project">
@@ -45,6 +46,7 @@
 		<foreign-key foreignTable="user" name="project_owner" onDelete="setnull" onUpdate="cascade">
 			<reference local="user_id" foreign="id"/>
 		</foreign-key>
+		<column name="settings" type="longvarchar" />
 	</table>
 	
 	<table name="sprint" phpName="Sprint">

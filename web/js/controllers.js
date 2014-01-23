@@ -79,7 +79,8 @@ evolvAppControllers.controller('TaskCtrl', ['$scope', 'CrudController','Rest', '
 		$scope.selected = undefined;
 		$scope.tagList = [];
 		$scope.setTag = function(tag) {
-			$scope.tagList.push(tag);
+			if($scope.tagList.indexOf(tag) == -1 && tag)
+				$scope.tagList.push(tag);
 		}
 		$scope.getTag = $scope.tagList;
 		

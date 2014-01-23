@@ -1,6 +1,6 @@
-INSERT INTO `user` VALUES (1,'Aslam','aslam@mutant-tech.com','e10adc3949ba59abbe56e057f20f883e',NULL,'2014-01-15 19:17:29',NULL),(2,'Rajesh','rajesh.jagtap@mutant-tech.com','e10adc3949ba59abbe56e057f20f883e','2014-01-15 19:15:35','2014-01-15 19:15:35',NULL);
+INSERT INTO `user` VALUES (1,'Aslam','aslam@mutant-tech.com','e10adc3949ba59abbe56e057f20f883e',NULL,NULL,'2014-01-15 19:17:29',NULL),(2,'Rajesh','rajesh.jagtap@mutant-tech.com','e10adc3949ba59abbe56e057f20f883e',NULL,'2014-01-15 19:15:35','2014-01-15 19:15:35',NULL);
 
-INSERT INTO `project` VALUES (1,'evolv','Develop simple task management system.',2,NULL,'2014-01-15 19:17:20',NULL);
+INSERT INTO `project` VALUES (1,'evolv','Develop simple task management system.',2,NULL,NULL,'2014-01-15 19:17:20',NULL);
 
 INSERT INTO `sprint` VALUES (1,'Prototype','2014-01-13','2014-01-17','Develop working prototype',NULL,1,2,'2014-01-15 19:24:56','2014-01-15 19:24:56',NULL);
 
